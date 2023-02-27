@@ -1,3 +1,7 @@
+/* This file is taken from
+ * https://github.com/lapers/stm32-asm-samples
+ */
+
 @ NVIC table
 @ DO NOT FORGET USE +1 SHIFT FOR ADDRESS ON THUMB
 
