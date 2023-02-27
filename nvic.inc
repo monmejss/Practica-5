@@ -2,7 +2,7 @@
 @ DO NOT FORGET USE +1 SHIFT FOR ADDRESS ON THUMB
 
 .word   0x20005000           @     stack pointer
-.word   start + 1            @     reset
+.word   setup + 1            @     reset
 
 .word   nvic_error_l0 + 1    @     NMI
 .word   nvic_error_l0 + 1    @     HardFault
