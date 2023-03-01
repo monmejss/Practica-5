@@ -51,5 +51,5 @@ L2:     str     r3, [r0] @ M[GPIOC_ODR] gets r1 value
 L4:     sub     r2, r2, #1
 L3:     cmp     r2, #0
         bge     L4
-        eor     r1, #1 @ negates r1
+        eor     r1, #1 @ negates LSB of r1
         b       loop
