@@ -2,6 +2,11 @@
 AS = arm-none-eabi-as
 LD = arm-none-eabi-ld
 OBJCOPY = arm-none-eabi-objcopy
+GIT = git
+
+# Git flags to unlink remote repositoty
+GITFLAGS = remote rm origin
+
 
 # Compiler and linker flags
 LDFLAGS = -T stm32f103c8t6.ld
@@ -35,4 +40,7 @@ cleanwin:
 clean:
 	rm -f $(OBJS) prog.elf prog.bin
 
-.PHONY: all clean
+unlink:
+	$(GIT) $(GITFLAGS)
+
+.PHONY: all clean unlink
