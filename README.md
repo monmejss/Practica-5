@@ -25,42 +25,77 @@ Los archivos con extensión INC contienen mnemónicos de direcciones de memoria 
 
 Los archivos con extensión S contienen código ensamblador ARM escrito en sintaxis GAS. Todas las funciones contenidas en estos archivos son declaradas como globales para que éstas puedan ser visibles por otros funciones contenidas en otros archivos durante el proceso de enlace.:
 
-### afio_map.inc
-
-Este archivo contiene las directivas que relaciones la dirección base de los registros de configuración de la funciones alternas de entrada y salida (AFIO, *Alternate Function Input/Output*). Entre varias utilidades, estos registros permite configurar las interrupciones externas.
-
-### blink.s
+### main.s
 
 La función `__main` está contenida en este archivo. Por omisión, está función siempre es invocada por la subrutina de restablecimiento. El código ensamblador de la función `__main` configura el pin trece de la tarjeta *blue pill* para que se encienda y apague cada segundo. A este comportamiento de encendido y apagado intermitente se le conoce como parpadeo (*blink*).
 
-El pin trece de la tarjeta *blue pill* tiene conectado un led azul integrado en la propia tarjeta. Este led está conectado en modo ánodo, esto implica que éste se enciende si se escribe el bit trece del registro y `GPIOC_ODR` con cero. Para lograr que el led parpadee, en la función `__main` se invoca iterativamente a una función llamada `ddelay` que provoca un retraso de un segundo, aproximadamente. Cada que pasa un segundo, el bit trece del registro `GPIOC_ODR` se complementa.
+El pin trece de la tarjeta *blue pill* tiene conectado un led azul, como se muestra en la figura de abajo. Este led está conectado en modo ánodo, lo que implica que éste se enciende si se escribe el bit trece del registro `GPIOC_ODR` con cero. Para lograr que el led parpadee, el valor del bit trece se complementa cada segundo, aproximadamente, mediante un bucle que genera el retraso mencionado.
+
+![PC13](./fig/pc13.png)
 
 ### default_handler.s
 
-La rutina de servicio de interrupción (ISR, *interrupt service routine*) de restablecimiento se encuentra alojada en este archivo. Esta rutina se invoca cada que el µC se restablece. Su código debe extenderse para inicializar las localidades de memoria de la sección de datos, la cual aloja las variables estáticas declaradas en lenguajes de alto nivel.
+La rutina de servicio de interrupción de restablecimiento se encuentra alojada en este archivo. Esta rutina se invoca cada que el µC se restablece. Su código debe extenderse para inicializar las localidades de memoria de la sección de datos, la cual aloja las variables estáticas declaradas en lenguajes de alto nivel. Este inicialización se realiza mediante un bucle *for* que copia byte a byte el valor inicial de las variables estáticas o las variables globales a la SRAM. la subrutina de restablecimiento también puede inicializar en cero aquellas variables estáticas que corresponden a la sección BSS (*block started by symbol*).
 
-### delay.s
+En lenguaje C, el gestionador de restablecimiento se codifica de la siguiente manera. Si el usuario de la plantilla desea inicializar variables globales o estáticas, entonces debe compilar el código en C a arm según corresponda. Se debe tener en cuenta que las variables que inician con un guion bajo corresponden a símbolos en ensamblador cuyo valor es establecido por el enlazador. 
 
-Aquí se define la función `ddelay`, la cual produce un retardo aproximado de un segundo vía software. El nombre *ddelay* hace referencia al término *dirty delay* (retraso sucio) debido a que impide que el procesador del µC realice alguna otra tarea mientras el tiempo del retraso transcurre. En su lugar, es conveniente generar los retrasos mediante interrupciones para permitir que el procesador continúe realizando otras tareas.
+```C
+// Reset handler
+void Reset_Handler(void)
+{
+    uint32_t *src, *dst;
 
-### exti_map.inc
+    // Copies the data section from flash to RAM
+    src = &_la_data;
+    dst = &_sdata;
+    while (dst < &_edata) {
+        *dst++ = *src++;
+    }
 
-### gpio_map.inc
+    // Clears the bss section in RAM
+    dst = &_bss;
+    while (dst < &_ebss) {
+        *dst++ = 0;
+    }
 
-### main.s
+    // Calls main
+    main();
 
-### nvic_reg_map.inc
+    // If main returns, enters an infinite loop
+    while (1);
+}
+```
 
-### rcc_map.inc
+### Archivos INC
 
-### scb_map.inc
+Estos archivo contiene directivas de ensamble que asignan un alias a la dirección base y a las compensaciones de los registros que permiten configurar los periféricos del µC. Los alias se establecen con la directiva de ensamble `.equ`, la cual asocia una etiqueta a un número.
 
-### systick_map.inc
+Para configurar un periférico del µC, en primera instancia debe cargarse la dirección base del periférico a configurar, después, debe moverse la constante de configuración de a un registro y, finalmente, el valor del registro debe almacenarse en la dirección de memoria que resulta de la suma de la dirección base del periférico más la compensación para acceder al registro de configuración.
 
-### stm32f103c8t6.ld
+El siguiente recorte de código arm ejemplifica cómo habilitar el reloj en el puerto A. En este ejemplo se utiliza el alias `RCC_BASE`, definido en el archivo `rcc_map.inc`, para guardar la dirección base de los registros de configuración del reloj en lugar de la constante `0x40021000`. Para escribir la constante de configuración `0x00000004` en el registro `RCC_APB2ENR`, se utiliza la instrucción `str` sumando a la dirección base almacenada en el registro `r0` la compensación `RCC_APB2ENR_OFFSET`.
 
-## Ensamble
+```ARM
+    # enabling clock in port A
+    ldr     r0, =RCC_BASE
+    mov     r1, 0x4 @ loads 4 in r1 to enable clock in port A (IOPA bit)
+    str     r1, [r0, RCC_APB2ENR_OFFSET] @ M[RCC_APB2ENR] gets 4
+```
 
-## Enlace
+El archivo `afio_map.inc` contiene las directivas que relacionan la dirección base y las compensaciones de los registros de configuración de las funciones alternas de entrada y salida (AFIO, *Alternate Function Input/Output*). Entre varias utilidades, los registros AFIO permite configurar las interrupciones externas.
 
-## Escritura del código en el µC
+Los alias que corresponden a la dirección de memoria base y las compensaciones de los registros de configuración de las interrupciones externas están contenidas en el archivo `exti_map.inc`. Una interrupción externa es aquella que es disparada por una señal generada por un periférico externo al µC, por ejemplo, el cambio de voltaje generado al oprimir un botón. La *blue pill* puede atender hasta 16 interrupciones externas. Las interrupciones externas de la cero a la cuatro están asociadas a su propia ISR, mientas que las interrupciones de en los rangos [9, 5] y [15, 10] se atienden mediante la misma ISR cada una.
+
+Los procesadores de la familia Cortex-M3 disponen de un controlador llamado NVIC (*nested vectorized interrupt controller*). Este controlador se encarga de gestionar las interrupciones generadas por periféricos externos conectados al procesador. En la siguiente figura de muestra un esquema que ilustra la conexión de los periféricos externos y el controlador, así como la conexión del procesador con el controlador. 
+
+![NVIC](fig/nvic.png)
+
+Dependiendo del modelo del procesador Cortex-M, este controlador puede atender hasta 240 tipos de interrupciones. El archivo `nvic_reg_map.inc` contiene los alias de la dirección base y las compensaciones de los registros de configuración de este controlador.
+
+El periférico que se encarga de sistema de reinicio y configuración del reloj de los procesadores Cortex-M se denota con las siglas RCC (*Reset and Clock Control*). Dependiendo de la configuración de este periférico, es posible habilitar o deshabilitar el reloj del sistema y seleccionar la señal de reloj de cada periférico del microcontrolador. Los alias que facilitan la manipulación de las direcciones de los registros de configuración del periférico RCC se encuentran definidos en el archivo `rcc_map.inc`.
+
+El periférico SCB (*System Control Block*) habilita varias funciones del µC, entre las que se encuentra la gestión de la prioridad de las interrupciones y el manejo de excepciones del sistema. Este periférico también configura el manejo de las fallas del sistema y las características de depuración. Las etiquetas asociadas a la dirección base y las compensaciones necesarias acceder a los registros de configuración de este periférico están contenidas en el archivo `scb_map.inc`.
+
+El temporizador del sistema (*SysTick*) es un contador de 24 bits que genera una excepción cada que la cuenta llega a cero y se reinicia. Este temporizador puede trabajar con la frecuencia base de la placa *blue pill* o con está frecuencia dividida entre ocho. El archivo `systick_map.inc` contiene los alias de la dirección base y las compensaciones que permiten acceder a los registros de configuración de este periférico.
+
+## Utilización de la plantilla de proyecto
+

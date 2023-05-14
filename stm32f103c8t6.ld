@@ -45,11 +45,15 @@ SECTIONS
         _edata = .; /* end of the data section in FLASH */
     }> SRAM AT> FLASH
 
+    /* Returns the absolute load address of the named section .data */
+    _bss = LOADADDR(.bss);
+
     .bss : /* The block starting symbol. It's the space where statically 
             * allocated variables that are declared but have not been assigned a 
             * value yet */
     {
         *(.bss)
+        _ebss = .; /* end of the data section in FLASH */
     }> SRAM
 
     /DISCARD/ : { *(.note.gnu.build-id) }

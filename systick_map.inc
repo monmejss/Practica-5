@@ -2,11 +2,6 @@
 
 .equ SYSTICK_BASE, 0xE000E010 @ The base address of the SysTick register
 
-.equ STK_CTRL,  SYSTICK_BASE + 0x000 @ SysTick control and status register
-.equ STK_LOAD,  SYSTICK_BASE + 0x004 @ SysTick reload value register
-.equ STK_VAL,   SYSTICK_BASE + 0x008 @SysTick current value register
-.equ STK_CALIB, SYSTICK_BASE + 0x00C @ SysTick calibration value register
-
 .equ STK_CTRL_OFFSET,  0x000 @ SysTick control and status register
 .equ STK_LOAD_OFFSET,  0x004 @ SysTick reload value register
 .equ STK_VAL_OFFSET,   0x008 @ SysTick current value register
