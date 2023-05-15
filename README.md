@@ -105,9 +105,9 @@ En sistemas basado en Ubuntu, debes emitir el siguiente comando para realizar la
 $ sudo apt install stlink-tools gcc-arm-none-eabi make
 ```
 
-Bajo windows, es necesario instalar el compilador cruzado en alguna distribución que se ejecute sobre el WSL (*Windows Subsystem for Linux*), si es que se dispone de este. Desafortunadamente, el acceso a los puertos USB bajo el WSL es complicado. En su lugar, es recomendable emplear la herramienta gráfica  [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html).
+Bajo windows, es necesario instalar el compilador cruzado en alguna distribución que se ejecute sobre el WSL (*Windows Subsystem for Linux*), si es que se dispone de este. Desafortunadamente, el acceso a los puertos USB bajo el WSL es complicado. En su lugar, es recomendable emplear la herramienta gráfica  [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html) o instalar manualmente las herramientas en cuestión, esto último puede realizarse siguiendo las instrucciones descritas en el siguiente repositorio [st-tools](https://github.com/stlink-org/stlink).
 
-Si no se dispone del WSL, entonces es posible instalar el compilador cruzado mediante la terminal MSYS64 provista por el ambiente de programación minGW. De igual forma, la grabación de µC se realizaría con el programa [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html).
+Si no se dispone del WSL, entonces es posible instalar el compilador cruzado mediante la terminal MSYS64 provista por el ambiente de programación minGW. De igual forma, la grabación de µC se realizaría con el programa [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html) o con el software publicado en [st-tools](https://github.com/stlink-org/stlink).
 
 ```Bash
 $ pacman -S mingw-w64-x86_64-arm-none-eabi-gcc mingw-w64-make
