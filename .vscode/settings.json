@@ -19,5 +19,6 @@
         "titleBar.inactiveForeground": "#e7e7e799"
     },
     "cSpell.language": "en,es-ES",
-    "peacock.color": "#57A519"
+    "peacock.color": "#57A519",
+    "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools"
 }
