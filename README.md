@@ -99,13 +99,13 @@ El temporizador del sistema (*SysTick*) es un contador de 24 bits que genera una
 
 ## Software requerido
 
-En sistemas basado en Ubuntu, debes emitir el siguiente comando para realizar la instalación del compilador cruzado arm y la utilidad para grabar archivo BIN en la memoria de los µC del fabricante STM.
+En sistemas basado en Ubuntu, debes emitir el siguiente comando para realizar la instalación del compilador cruzado arm y la utilidad para grabar archivos BIN en la memoria de los µC del fabricante STM.
 
 ```Bash
 $ sudo apt install stlink-tools gcc-arm-none-eabi make
 ```
 
-Bajo windows, es necesario instalar el compilador cruzado en alguna distribución que se ejecute sobre el WSL (*Windows Subsystem for Linux*), si es que se dispone de este. Desafortunadamente, bajo el WSL es complicado permitir que las herramientas del paquete `stlink-tools` puedan acceder a los puertos USB. En este caso, es recomendable emplear la herramienta gráfica  [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html).
+Bajo windows, es necesario instalar el compilador cruzado en alguna distribución que se ejecute sobre el WSL (*Windows Subsystem for Linux*), si es que se dispone de este. Desafortunadamente, el acceso a los puertos USB bajo el WSL es complicado. En su lugar, es recomendable emplear la herramienta gráfica  [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html).
 
 Si no se dispone del WSL, entonces es posible instalar el compilador cruzado mediante la terminal MSYS64 provista por el ambiente de programación minGW. De igual forma, la grabación de µC se realizaría con el programa [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html).
 
@@ -115,12 +115,12 @@ $ pacman -S mingw-w64-x86_64-arm-none-eabi-gcc mingw-w64-make
 
 ## Utilización de la plantilla de proyecto
 
-Si estás clonando el código desde github, entonces conviene desvincular tu copia local del repositorio remoto. Para esto, en la terminal de comandos, dentro de la carpeta que aloja la plantilla de proyecto, emite el siguiente comando `$ make unlink.
+Si estás clonando el código desde github, entonces conviene desvincular tu copia local del repositorio remoto. Para esto, en la terminal de comandos, dentro de la carpeta que aloja la plantilla de proyecto, emite el siguiente comando `make unlink`.
 
 Enseguida, limpia el proyecto ejecutando el comando `make clean`. Este comando elimina los archivos objeto que resultan del ensamble del código arm, así como los archivo ELF y BIN. Utiliza este comando siempre y cuando desees preservar únicamente los archivos fuente. Si estás codificando desde Windows, entonces emplea el comando `make cleanwin`, el cual tiene el mismo efecto que el ya descrito en este párrafo.
 
 Antes de ensamblar los archivos S, es necesario que agregues a la línea 10 del archivo `Makefile` aquellos archivos que contengan el código de las funciones que has escrito, por ejemplo, podrías agregar a la lista el archivo `delay.s` en caso de que lo hubieras codificado.
 
-Una vez que has completado la lista de archivos S a ensamblar, ejecuta el comando `make`, el cual creará los archivos objetos que corresponden a tus archivos S y los enlazará según las reglas descritas en el archivo `stm32f103c8t6.ld`, esto si no hay errores en el código. Después, el mismo `make`genera el archivo BIN que puede grabarse en el µC.
+Una vez que has completado la lista de archivos S a ensamblar, ejecuta el comando `make`, el cual creará los archivos objetos que corresponden a tus archivos S y los enlazará según las reglas descritas en el archivo `stm32f103c8t6.ld`, esto si no hay errores en el código. Después, el mismo `make` genera el archivo BIN que puede grabarse en el µC.
 
-El archivo BIN contiene el código que el µC ejecutará, el valor de las variables estáticas o globales y los arreglos inicializados que serán cargadas en la memoria del µC. Si deseas escribir este código mediante la terminal, entonces emite el comando `make write`, el cual invoca a la utilidad `st-flash` para grabar el archivo `prog.bin` generado por el comando `make`.
+El archivo BIN contiene el código que el µC ejecutará, el valor de las variables estáticas o globales y los arreglos inicializados que serán cargadas en la memoria del µC. Si deseas escribir este código mediante la terminal, entonces emite el comando `make write`, el cual invoca a la utilidad `st-flash` para grabar el archivo `prog.bin` generado por el comando `make`. Recuerda que `make write` solo opera correctamente en Linux.
