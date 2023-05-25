@@ -5,6 +5,12 @@
 .include "ivt.s"
 .include "gpio_map.inc"
 .include "rcc_map.inc"
+.extern read_button
+.extern output
+
+.equ PIN6, 0x6
+.equ PIN7, 0x7
+.equ PORTA, GPIOA_BASE + GPIOx_IDR_OFFSET
 
 .section .text
 .align	1
@@ -30,39 +36,79 @@
  * | r7      |
  * + --------+
  * | lr      |
- * + --------+S
+ * + --------+
  */
 __main:
-    # Prologue
-    push    {r7, lr}
-    sub     sp, #16
-    add     r7, sp, #0  
+        # Prologue
+        push    {r7, lr}
+        sub     sp, #16
+        add     r7, sp, #0  
 setup: @ Starts peripheral settings
-    # enables clock in Port A
-    ldr     r0, =RCC_BASE
-    mov     r1, #4
-    str     r1, [r0, RCC_APB2ENR_OFFSET]
-    # configures pin 0 to 7 in GPIOA_CRL
-    ldr     r0, =GPIOA_BASE @ moves base address of GPIOA registers
-    ldr     r1, =0x48833333 @ PA[4:0] works as output, PA[6:5] as inputs
-    str     r1, [r0, GPIOx_CRL_OFFSET] @ M[GPIOA_CRL] gets 0x48833333
-    # disables pin 8 to 15 in GPIOA_CRL
-    ldr     r1, =0x44444444
-    str     r1, [r0, GPIOx_CRH_OFFSET] @ M[GPIOA_CRL] gets 0x44444444
-    # initializes variables
-    eor     r0, r0       @ clears r0
-    str     r0, [r7]     @ counter = 0
-    str     r0, [r7, #4] @ buttonA = 0
-    str     r0, [r7, #8] @ buttonB = 0
+        # enables clock in Port A
+        ldr     r0, =RCC_BASE
+        mov     r1, #4
+        str     r1, [r0, RCC_APB2ENR_OFFSET]
+        # configures pin 0 to 7 in GPIOA_CRL
+        ldr     r0, =GPIOA_BASE @ moves base address of GPIOA registers
+        ldr     r1, =0x48833333 @ PA[4:0] works as output, PA[6:5] as inputs
+        str     r1, [r0, GPIOx_CRL_OFFSET] @ M[GPIOA_CRL] gets 0x48833333
+        # disables pin 8 to 15 in GPIOA_CRL
+        ldr     r1, =0x44444444
+        str     r1, [r0, GPIOx_CRH_OFFSET] @ M[GPIOA_CRL] gets 0x44444444
+        # initializes variables
+        eor     r0, r0       @ clears r0
+        str     r0, [r7]     @ counter = 0
+        str     r0, [r7, #4] @ buttonA = 0
+        str     r0, [r7, #8] @ buttonB = 0
 loop: @ Starts microcontroller logic
-    # read_button implements the functionality of is_button_pressed()
-    # buttonA = read_button(PORTA, PIN6)
-    # buttonB = read_button(PORTA, PIN7)
-    # if (buttonA && buttonB)
-    #     counter = 0;
-    # else if (buttonA && !buttonB)
-    #     counter++;
-    # else if (!buttonA && buttonB)
-    #     counter--;
-    # output(counter);
-    b       loop
+        # read_button implements the functionality of is_button_pressed(), but
+        # this function is parametered
+        # buttonA = read_button(PORTA, PIN6);
+        mov     r1, PIN6
+        ldr     r0, =PORTA
+        bl      read_button
+        str     r0, [r7, #4]
+        # buttonB = read_button(PORTA, PIN7);
+        mov     r1, PIN7
+        ldr     r0, =PORTA
+        bl      read_button
+        str     r0, [r7, #8]
+        # if (buttonA && buttonB)
+        ldr    r0, [r7, #4]
+        cmp    r0, #0
+        beq    .L1
+        ldr    r0, [r7, #8]
+        cmp    r0, #0
+        beq    .L1
+        #     counter = 0;
+        ldr    r0, [r7]
+        eor    r0, r0
+        str    r0, [r7]
+        b      .L2
+.L1:    @ else if (buttonA && !buttonB)
+        ldr    r0, [r7, #4]
+        cmp    r0, #0
+        beq    .L3
+        ldr    r0, [r7, #8]
+        cmp    r0, #1
+        beq    .L3        
+        #     counter++;
+        ldr    r0, [r7]
+        add    r0, #1
+        str    r0, [r7]
+        b      .L2
+.L3:    @ else if (!buttonA && buttonB)
+        ldr    r0, [r7, #4]
+        cmp    r0, #1
+        beq    .L2
+        ldr    r0, [r7, #8]
+        cmp    r0, #0
+        beq    .L2        
+        #     counter--;
+        ldr    r0, [r7]
+        sub    r0, #1
+        str    r0, [r7]
+.L2:    @ output(counter);
+        ldr     r0, [r7]
+        bl      output
+        b       loop
