@@ -5,9 +5,9 @@
 .global read_button
 .extern digital_read
 .extern delay
-.equ DELAY, 5
+.equ DELAY, 6
 .equ POSITIVE_READINGS, 10
-.equ SAMPLES, 12
+.equ SAMPLES, 15
 .include "gpio_map.inc"
 /*
  * This function implements the procedure is_button_pressed() proposed by Zhu
