@@ -5,6 +5,7 @@
 .include "gpio_map.inc" 
 .thumb_func
 .type	output, %function
+.section .text
 # Emits a value through a Digital Port
 # Argument:
 #     - r0: 5 bit integer
@@ -13,3 +14,4 @@ output:
         and     r0, #31
         str     r0, [r1, GPIOx_ODR_OFFSET]
         bx	    lr
+.size	output, .-output
