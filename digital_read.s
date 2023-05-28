@@ -1,5 +1,6 @@
 .section .text
 .include "gpio_map.inc"
+.extern delay
 .align	1
 .syntax unified
 .thumb
@@ -7,7 +8,8 @@
 .thumb_func
 .type	digital_read, %function
 digital_read:
-        str     r2, [r0, GPIOx_IDR_OFFSET]
+        ldr     r2, [r0, GPIOx_IDR_OFFSET]
         lsr     r2, r1
+        and     r2, #1
         mov     r0, r2
         bx      lr

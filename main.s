@@ -7,10 +7,10 @@
 .include "rcc_map.inc"
 .extern read_button
 .extern output
+.extern digital_read
 
+.equ PIN5, 0x5
 .equ PIN6, 0x6
-.equ PIN7, 0x7
-.equ PORTA, GPIOA_BASE + GPIOx_IDR_OFFSET
 
 .section .text
 .align	1
@@ -63,14 +63,14 @@ setup: @ Starts peripheral settings
 loop: @ Starts microcontroller logic
         # read_button implements the functionality of is_button_pressed(), but
         # this function is parametered
-        # buttonA = read_button(PORTA, PIN6);
-        mov     r1, PIN6
-        ldr     r0, =PORTA
+        # buttonA = read_button(PORTA, PIN5);
+        mov     r1, PIN5
+        ldr     r0, =GPIOA_BASE
         bl      read_button
         str     r0, [r7, #4]
-        # buttonB = read_button(PORTA, PIN7);
-        mov     r1, PIN7
-        ldr     r0, =PORTA
+        # buttonB = read_button(PORTA, PIN6);
+        mov     r1, PIN6
+        ldr     r0, =GPIOA_BASE
         bl      read_button
         str     r0, [r7, #8]
         # if (buttonA && buttonB)
