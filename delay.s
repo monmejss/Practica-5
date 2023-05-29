@@ -18,7 +18,7 @@ delay:
         add     r7, sp, #0 @ updates r7
         str     r0, [r7] @ backs ms up
         # Body function
-        ldr     r0, =#3500 @ ticks = 1250, adjust to achieve 1 ms delay
+        ldr     r0, =#1250 @ ticks = 1250, adjust to achieve 1 ms delay
         str     r0, [r7, #16]
 # for (i = 0; i < ms; i++)
         mov     r0, #0 @ i = 0;
@@ -44,7 +44,7 @@ F3:     ldr     r0, [r7, #8] @ i < ms
         blt     F4
         # Epilogue
         add     r7, r7, #28
-        mov	    sp, r7
-        pop	    {r7}
-        bx	    lr
+        mov	sp, r7
+        pop	{r7}
+        bx	 lr
 .size	delay, .-delay      

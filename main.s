@@ -9,8 +9,8 @@
 .extern output
 .extern digital_read
 
-.equ PIN5, 0x5
-.equ PIN6, 0x6
+.equ PIN0, 0x0
+.equ PIN1, 0x1
 
 .section .text
 .align	1
@@ -46,31 +46,31 @@ __main:
 setup: @ Starts peripheral settings
         # enables clock in Port A
         ldr     r0, =RCC_BASE
-        mov     r1, #4
+        mov     r1, #0x4
         str     r1, [r0, RCC_APB2ENR_OFFSET]
+        
         # configures pin 0 to 7 in GPIOA_CRL
         ldr     r0, =GPIOA_BASE @ moves base address of GPIOA registers
-        ldr     r1, =0x48833333 @ PA[4:0] works as output, PA[6:5] as inputs
+        ldr     r1, =0x33333388 @ PA[4:0] works as output, PA[6:5] as inputs
         str     r1, [r0, GPIOx_CRL_OFFSET] @ M[GPIOA_CRL] gets 0x48833333
         
-        ldr     r1, =0x34443333
-        str     r1, [r0, GPIOx_CRH_OFFSET] @ M[GPIOA_CRL] gets 0x44444444
+        ldr     r1, =0x43333333
+        str     r1, [r0, GPIOx_CRH_OFFSET] 
+        
         
         # initializes variables
         eor     r0, r0       @ clears r0
         str     r0, [r7]     @ counter = 0
         str     r0, [r7, #4] @ buttonA = 0
         str     r0, [r7, #8] @ buttonB = 0
-loop: @ Starts microcontroller logic
-        # read_button implements the functionality of is_button_pressed(), but
-        # this function is parametered
-        # buttonA = read_button(PORTA, PIN5);
-        mov     r1, PIN5
+
+loop: 
+        mov     r1, PIN0
         ldr     r0, =GPIOA_BASE
         bl      read_button
         str     r0, [r7, #4]
         # buttonB = read_button(PORTA, PIN6);
-        mov     r1, PIN6
+        mov     r1, PIN1
         ldr     r0, =GPIOA_BASE
         bl      read_button
         str     r0, [r7, #8]
