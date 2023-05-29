@@ -52,9 +52,10 @@ setup: @ Starts peripheral settings
         ldr     r0, =GPIOA_BASE @ moves base address of GPIOA registers
         ldr     r1, =0x48833333 @ PA[4:0] works as output, PA[6:5] as inputs
         str     r1, [r0, GPIOx_CRL_OFFSET] @ M[GPIOA_CRL] gets 0x48833333
-        # disables pin 8 to 15 in GPIOA_CRL
-        ldr     r1, =0x44444444
+        
+        ldr     r1, =0x34443333
         str     r1, [r0, GPIOx_CRH_OFFSET] @ M[GPIOA_CRL] gets 0x44444444
+        
         # initializes variables
         eor     r0, r0       @ clears r0
         str     r0, [r7]     @ counter = 0
