@@ -11,7 +11,7 @@
 #     - r0: 5 bit integer
 output:
         ldr     r1, =GPIOA_BASE
-        and     r0, #31
+        and     r0, #1023
         str     r0, [r1, GPIOx_ODR_OFFSET]
         bx	    lr
 .size	output, .-output
