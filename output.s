@@ -16,3 +16,4 @@ output:
         str     r0, [r1, GPIOx_ODR_OFFSET]
         bx	lr
 .size	output, .-output
+

@@ -1,6 +1,6 @@
 #define DELAY 50
 #define SAMPLES 10
-#define POSITIVE_READINGS 4
+#define POSITIVE_READINGS 10
 
 int digital_read(int port, int pin);
 void delay(int ms);
@@ -13,7 +13,7 @@ int read_button(int port, int pin)
     int counter = 0;
     for (int i = 0; i < SAMPLES; i++)
     {
-        delay(5);
+        delay(10);
         bit = digital_read(port, pin);
         if (!bit)
             counter = 0;

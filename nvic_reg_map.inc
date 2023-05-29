@@ -40,3 +40,4 @@
 
 # STIR register addresses
 .equ NVIC_STIR, 0xE000EF00
+

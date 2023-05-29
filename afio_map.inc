@@ -10,3 +10,4 @@
 .equ AFIO_EXTICR3_OFFSET, 0x010 @ External interrupt configuration register 3
 .equ AFIO_EXTICR4_OFFSET, 0x014 @ External interrupt configuration register 4
 .equ AFIO_MAPR2_OFFSET, 0x01C @ AF remap and debug I/O configuration register 2
+

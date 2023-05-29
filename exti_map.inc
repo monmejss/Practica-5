@@ -9,3 +9,4 @@
 .equ EXTI_FTST_OFFSET,  0x00C @ EXTI Falling trigger selection register
 .equ EXTI_SWIER_OFFSET, 0x010 @ EXTI Software interrupt event register
 .equ EXTI_PR_OFFSET,    0x014 @ EXTI Pending register
+

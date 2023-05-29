@@ -18,3 +18,4 @@
 .equ SCB_HFSR_OFFSET,  0x02C @ Offset to access the Hard fault status register
 .equ SCB_MMAR_OFFSET,  0x034 @ Offset to access the Memory management fault address register
 .equ SCB_BFAR_OFFSET,  0x038 @ Offset to access the Bus fault address register
+

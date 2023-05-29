@@ -1,6 +1,5 @@
-.cpu cortex-m3      @ Generates Cortex-M3 instructions
+.cpu cortex-m3
 .section .text
-# Default subroutine for not implemented ISR
 .align	1
 .syntax unified
 .thumb

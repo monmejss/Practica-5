@@ -113,3 +113,4 @@ loop:
         ldr     r0, [r7]
         bl      output
         b       loop
+

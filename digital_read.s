@@ -7,6 +7,7 @@
 .global digital_read
 .thumb_func
 .type	digital_read, %function
+
 digital_read:
         ldr     r2, [r0, GPIOx_IDR_OFFSET]
         lsr     r2, r1

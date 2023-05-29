@@ -15,3 +15,4 @@
 .equ RCC_CSR_OFFSET, 0x024 @ Control/status register (RCC_CSR)
 .equ RCC_AHBSTR_OFFSET, 0x028 @ AHB peripheral clock reset register
 .equ RCC_CFGR2_OFFSET, 0x02C @ Clock configuration register2
+

@@ -76,3 +76,4 @@
 .word   Default_Handler + 1        @ 40	EXTI15_10
 .word   Default_Handler + 1        @ 41	RTCAlarm
 .word   Default_Handler + 1        @ 42	USBWakeup
+

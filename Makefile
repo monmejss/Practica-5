@@ -7,7 +7,7 @@ OBJCOPY = arm-none-eabi-objcopy
 LDFLAGS = -T stm32f103c8t6.ld
 
 # List of source files
-SRCS = main.s ivt.s default_handler.s reset_handler.s delay.s read_button.s output.s digital_read.s
+SRCS = main.s ivt.s default_handler.s reset_handler.s delay.s read_button.s output.s digital_read.s 
 
 # List of object files
 OBJS = $(SRCS:.s=.o)

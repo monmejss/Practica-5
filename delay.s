@@ -4,13 +4,6 @@
 .thumb
 .thumb_func
 .type	delay, %function
-# This functions delays the program execution n milliseconds (ms)
-# Argument:
-#     - r0: number of ms
-# local variables:
-#     - iterator i
-#     - iterator j
-#     - ticks
 delay:
         # Prologue
         push    {r7} @ backs r7 up
