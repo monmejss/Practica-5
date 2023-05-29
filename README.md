@@ -14,3 +14,5 @@ A su vez, main.s utiliza funciones de otros archivos que ayudan a la ejecución 
 5. Para grabar el archivo .bin emplea el comando ` make write `
 
 ## Implementación  
+
+![Captura desde 2023-05-29 12-59-41](https://github.com/monmejss/Practica-5/assets/122710250/deb86619-3540-4210-9902-588777199078)
